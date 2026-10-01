@@ -1,0 +1,41 @@
+# ByteBites Class Diagram (FINAL)
+
+```mermaid
+classDiagram
+    class Customer {
+        +str name
+        +list~Transaction~ purchase_history
+        +is_verified() bool
+        +view_menu(menu Menu) list~FoodItem~
+    }
+    class FoodItem {
+        +str name
+        +float price
+        +str category
+        +float popularity_rating
+    }
+    class Menu {
+        +list~FoodItem~ items
+        +add_item(item FoodItem) None
+        +filter_by_category(category str) list~FoodItem~
+    }
+    class Transaction {
+        +Customer customer
+        +list~FoodItem~ items
+        +add_item(item FoodItem) None
+        +compute_total() float
+    }
+
+    Menu "1" o-- "*" FoodItem : catalogs
+    Customer "1" -- "*" Transaction : places / purchase_history
+    Transaction "*" o-- "*" FoodItem : selected items
+    Customer ..> Menu : views
+```
+
+## Changes from the draft
+- Customer–Transaction is now one bidirectional association (Customer holds `purchase_history`, Transaction holds `customer`).
+- Added `Transaction.add_item()`, since the spec says a user "picks items" into a transaction.
+- `is_verified()` returns True when `purchase_history` is non-empty (spec: history is used to verify real users).
+- Added `Customer.view_menu(menu)` and a dependency arrow `Customer ..> Menu : views`, so a customer can browse the menu (the menu is passed in, not stored).
+- Relationship labels clarified (catalog vs. selected items).
+- No auth, database, or extra features added, per the design reference.
